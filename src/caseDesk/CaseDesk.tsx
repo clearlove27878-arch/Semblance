@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { FINAL_GATE_DEFINITION, FORCE_GATE_DEFINITION, TAPPING_GATE_DEFINITION } from './gates/caseGateDefinitions';
-import { matchesAcceptedTextAnswer, matchesFinalSlots, matchesPartialTextAnswer, matchesRelationSet } from './gates/reasoningGate';
+import { matchesAcceptedTextAnswer, matchesFinalSlots, matchesPartialTextAnswer, matchesRelationSet, toggleReasoningObjectSelection } from './gates/reasoningGate';
 import type { FinalGateDefinition, FinalSlotId, ReasoningGateDefinition, ReasoningGateStatus } from './gates/reasoningGate';
 import { DEDUCTION_UNLOCK_SOURCE, getAvailableGateIds, isReadingChapterAccessible, READING_UNLOCK_SOURCE, resolveDeductionTitle, type FlowEvent } from './flow/InvestigationFlow';
 import { PRODUCTION_FLOW } from './flow/flowDefinition';
@@ -1027,10 +1027,8 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
   const handlePickerSelect = (objectId: string, targetSlot?: FinalSlotId) => {
     if (!pickerContext) return;
     if (pickerContext.selectionMode === 'relation') {
-      if (relationIds.includes(objectId) || relationIds.length >= pickerContext.maxObjects) return;
-      setRelationIds((previous) => previous.includes(objectId) || previous.length >= pickerContext.maxObjects ? previous : [...previous, objectId]);
+      setRelationIds((previous) => toggleReasoningObjectSelection(previous, objectId, pickerContext.maxObjects));
       setGateSession((previous) => previous ? { ...previous, status: 'active', feedback: '', feedbackBlocks: undefined } : previous);
-      if (relationIds.length + 1 >= pickerContext.maxObjects) closePicker();
       return;
     }
     if (!targetSlot) return;
@@ -1216,7 +1214,20 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
           )}
 
           {gateSession && activeDefinitionWithProgress ? (
-            <ReasoningGate id="reasoning-node" gate={activeDefinitionWithProgress} status={gateSession.status} open feedback={gateSession.feedback} feedbackBlocks={gateSession.feedbackBlocks} onBack={closeReasoningGate} onSolved={handleGateSolved}>
+            <ReasoningGate
+              id="reasoning-node"
+              gate={activeDefinitionWithProgress}
+              status={gateSession.status}
+              open
+              feedback={gateSession.feedback}
+              feedbackBlocks={gateSession.feedbackBlocks}
+              onBack={closeReasoningGate}
+              onSolved={handleGateSolved}
+              answerValue={gateSession.gateId === 'tapping' ? gateSession.answer : undefined}
+              onAnswerChange={gateSession.gateId === 'tapping' ? updateGateAnswer : undefined}
+              onAnswerSubmit={gateSession.gateId === 'tapping' ? handleReasoningSubmit : undefined}
+              answerDisabled={gateSession.gateId === 'tapping' && gateSession.status === 'success'}
+            >
               {gateSession.gateId === 'force' && gateSession.status !== 'success' ? (
                 <>
                   <div className="gate-answer-surface">
@@ -1268,22 +1279,23 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
         availableSections={availableMaterialSections}
         onSectionChange={(section) => { setActiveMaterialSection(section); setActiveSection(section === 'all' ? 'case' : section); }}
       />
-      <ReasoningBar
-        mode={gateSession ? gateSession.gateId === 'tapping' ? 'answer' : 'relation' : reasoningMode}
-        query={gateSession?.gateId === 'tapping' ? gateSession.answer : clueSearch}
-        relationChips={gateSession?.gateId === 'final' ? [] : relationChips}
-        onModeChange={gateSession ? () => undefined : setReasoningMode}
-        onQueryChange={gateSession?.gateId === 'tapping' ? updateGateAnswer : setClueSearch}
-        onRemoveRelation={removeRelation}
-        onClearRelations={() => setRelationIds([])}
-        onSubmit={handleReasoningSubmit}
-        onOpenObjectPicker={gateSession?.gateId === 'force' && gateSession.status !== 'success' ? openRelationPicker : undefined}
-        relationMaxObjects={gateSession?.gateId === 'force' ? 3 : 4}
-        inputDisabled={Boolean(gateSession && gateSession.gateId !== 'tapping') || gateSession?.status === 'success'}
-        modeLocked={Boolean(gateSession)}
-        submitDisabled={gateSession?.gateId === 'tapping' ? !gateSession.answer.trim() : false}
-        autoFocus={Boolean(gateSession && gateSession.gateId === 'tapping' && gateSession.status !== 'success')}
-      />
+      {gateSession?.gateId !== 'tapping' ? (
+        <ReasoningBar
+          mode={gateSession ? 'relation' : reasoningMode}
+          query={clueSearch}
+          relationChips={gateSession?.gateId === 'final' ? [] : relationChips}
+          onModeChange={gateSession ? () => undefined : setReasoningMode}
+          onQueryChange={setClueSearch}
+          onRemoveRelation={removeRelation}
+          onClearRelations={() => setRelationIds([])}
+          onSubmit={handleReasoningSubmit}
+          onOpenObjectPicker={gateSession?.gateId === 'force' && gateSession.status !== 'success' ? openRelationPicker : undefined}
+          relationMaxObjects={gateSession?.gateId === 'force' ? 3 : 4}
+          inputDisabled={Boolean(gateSession)}
+          modeLocked={Boolean(gateSession)}
+          submitDisabled={false}
+        />
+      ) : null}
 
       {pickerContext ? (
         <ReasoningObjectPicker

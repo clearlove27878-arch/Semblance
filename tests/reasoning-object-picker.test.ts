@@ -8,7 +8,7 @@ import {
   validateReasoningObjectRegistry
 } from '../src/content/ReasoningObjectRegistry';
 import { FINAL_GATE_DEFINITION, FORCE_GATE_DEFINITION } from '../src/caseDesk/gates/caseGateDefinitions';
-import { matchesFinalSlots, matchesRelationSet } from '../src/caseDesk/gates/reasoningGate';
+import { matchesFinalSlots, matchesRelationSet, toggleReasoningObjectSelection } from '../src/caseDesk/gates/reasoningGate';
 import { clearReasoningGateDraft, loadReasoningGateDraft, saveReasoningGateDraft } from '../src/caseDesk/reasoningDraftPersistence';
 
 describe('ReasoningObject Registry', () => {
@@ -60,6 +60,17 @@ describe('ReasoningObject Registry', () => {
 });
 
 describe('Reasoning Gate canonical matching', () => {
+  it('toggles Force selection, enforces three objects, and allows replacement after removal', () => {
+    let selected = toggleReasoningObjectSelection([], 'A');
+    selected = toggleReasoningObjectSelection(selected, 'B');
+    selected = toggleReasoningObjectSelection(selected, 'C');
+    expect(selected).toEqual(['A', 'B', 'C']);
+    expect(toggleReasoningObjectSelection(selected, 'D')).toEqual(['A', 'B', 'C']);
+    selected = toggleReasoningObjectSelection(selected, 'B');
+    expect(selected).toEqual(['A', 'C']);
+    expect(toggleReasoningObjectSelection(selected, 'D')).toEqual(['A', 'C', 'D']);
+  });
+
   it('accepts canonical picker IDs against existing formal Gate mappings', () => {
     const firstForce = FORCE_GATE_DEFINITION.standardSets?.[0];
     expect(firstForce).toBeDefined();

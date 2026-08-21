@@ -120,6 +120,18 @@ export function matchesRelationSet(candidateIds: readonly string[], standardSets
   return standardSets.find((item) => [...item.objectIds].map((id) => canonicalizeReasoningObjectId(id) ?? id).sort().join('|') === normalizedCandidate)?.forceId ?? null;
 }
 
+export function toggleReasoningObjectSelection(
+  selectedObjectIds: readonly string[],
+  objectId: string,
+  maxObjects = 3
+): string[] {
+  if (selectedObjectIds.includes(objectId)) {
+    return selectedObjectIds.filter((id) => id !== objectId);
+  }
+  if (selectedObjectIds.length >= maxObjects) return [...selectedObjectIds];
+  return [...selectedObjectIds, objectId];
+}
+
 export function matchesFinalSlots(
   candidate: Partial<Record<FinalSlotId, string>>,
   slots: readonly { objectId: string; slotId: FinalSlotId }[]

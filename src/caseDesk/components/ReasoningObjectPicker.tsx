@@ -116,19 +116,21 @@ export function ReasoningObjectPicker({ open, selectionMode, title, targetSlot, 
   ];
 
   const handleSelect = (object: ReasoningObject) => {
+    if (selectedIdSet.has(object.id)) {
+      onSelect(object.id, targetSlot);
+      setNotice('已取消选择。');
+      return;
+    }
     if (usedIdSet.has(object.id)) {
       setNotice('已用于当前推理。');
       return;
     }
-    if (selectedIdSet.has(object.id)) {
-      setNotice('已经加入当前推理。');
-      return;
-    }
     if (selectionMode === 'relation' && selectedCount >= maxObjects) {
-      setNotice('当前关联已满，请先删除一个对象。');
+      setNotice('每组 Force 只能选择三个对象。');
       return;
     }
     onSelect(object.id, targetSlot);
+    setNotice('已加入当前推理。');
   };
 
   return (
@@ -168,7 +170,7 @@ export function ReasoningObjectPicker({ open, selectionMode, title, targetSlot, 
                     <span className="reasoning-object-meta">{KIND_LABELS[object.kind]}{selected ? ' · 已加入当前推理' : used ? ' · 已用于当前推理' : ''}</span>
                     {import.meta.env.DEV ? <span className="reasoning-object-debug">{object.id} · {object.sourceContentIds.join(', ')}</span> : null}
                   </span>
-                  <span className="reasoning-object-state" aria-hidden="true">{selected ? '✓' : used ? '—' : '选择'}</span>
+                  <span className="reasoning-object-state">{selected ? '已选择 ✓' : used ? '已用于当前推理' : '选择'}</span>
                 </button>
                 {onViewSource && object.sourceContentIds.length > 0 ? <button type="button" className="reasoning-object-view" onClick={() => onViewSource(object)}>查看{object.kind === 'clue' ? '' : '来源'}</button> : null}
               </article>

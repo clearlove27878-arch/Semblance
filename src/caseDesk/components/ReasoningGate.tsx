@@ -1,7 +1,8 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import type { ContentTextBlock } from '../../content/types';
 import type { ReasoningGateDefinition, ReasoningGateStatus } from '../gates/reasoningGate';
 import { acquireScrollLock } from '../../core/scrollLock';
+import { shouldSubmitReasoningBarEnter } from './ReasoningBar';
 
 export interface ReasoningGateProps {
   id?: string;
@@ -13,6 +14,10 @@ export interface ReasoningGateProps {
   onOpen?: () => void;
   onBack: () => void;
   onSolved?: (gateId: string) => void;
+  answerValue?: string;
+  onAnswerChange?: (value: string) => void;
+  onAnswerSubmit?: () => void;
+  answerDisabled?: boolean;
   children?: ReactNode;
 }
 
@@ -78,6 +83,56 @@ function GateSuccess({ message, blocks, textBlocks, reveal, revealTextBlocks }: 
   );
 }
 
+function GateAnswerInput({ gateTitle, value, onChange, onSubmit, disabled = false }: {
+  gateTitle: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+  disabled?: boolean;
+}) {
+  const composingRef = useRef(false);
+  const submit = () => {
+    if (!disabled) onSubmit();
+  };
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (composingRef.current) return;
+    submit();
+  };
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (!shouldSubmitReasoningBarEnter({
+      key: event.key,
+      shiftKey: event.shiftKey,
+      inputDisabled: disabled,
+      mode: 'answer',
+      isComposing: composingRef.current || event.nativeEvent.isComposing,
+      keyCode: event.keyCode
+    })) return;
+    event.preventDefault();
+    submit();
+  };
+
+  return (
+    <form className="reasoning-gate-answer-surface" aria-label={`${gateTitle}输入栏`} onSubmit={handleSubmit}>
+      <label className="reasoning-input-wrap reasoning-gate-answer-input">
+        <span className="reasoning-icon" aria-hidden="true">⌕</span>
+        <span className="sr-only">{gateTitle}判断输入</span>
+        <input
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          onKeyDown={handleKeyDown}
+          onCompositionStart={() => { composingRef.current = true; }}
+          onCompositionEnd={() => { composingRef.current = false; }}
+          placeholder="输入你的判断……"
+          disabled={disabled}
+          aria-label={`${gateTitle}判断输入`}
+        />
+      </label>
+      <button type="submit" className="primary-button reasoning-submit" disabled={disabled || !value.trim()}>{disabled ? '已完成' : '提交判断'}</button>
+    </form>
+  );
+}
+
 function GatePrompt({ gate, status, feedback, feedbackBlocks }: { gate: ReasoningGateDefinition; status: ReasoningGateStatus; feedback?: string; feedbackBlocks?: readonly ContentTextBlock[] }) {
   if (status === 'success') {
     return <GateSuccess
@@ -115,7 +170,7 @@ function GatePrompt({ gate, status, feedback, feedbackBlocks }: { gate: Reasonin
   );
 }
 
-export function ReasoningGate({ id, gate, status, open, feedback, feedbackBlocks, onOpen, onBack, onSolved, children }: ReasoningGateProps) {
+export function ReasoningGate({ id, gate, status, open, feedback, feedbackBlocks, onOpen, onBack, onSolved, answerValue, onAnswerChange, onAnswerSubmit, answerDisabled = false, children }: ReasoningGateProps) {
   const reportedSuccess = useRef(false);
 
   useEffect(() => {
@@ -165,6 +220,9 @@ export function ReasoningGate({ id, gate, status, open, feedback, feedbackBlocks
       </header>
       {gate.progress ? <GateProgress current={gate.progress.current} total={gate.progress.total} /> : null}
       <GatePrompt gate={gate} status={status} feedback={feedback} feedbackBlocks={feedbackBlocks} />
+      {gate.type === 'text_answer' && status !== 'success' && answerValue !== undefined && onAnswerChange && onAnswerSubmit ? (
+        <GateAnswerInput gateTitle={gate.title} value={answerValue} onChange={onAnswerChange} onSubmit={onAnswerSubmit} disabled={answerDisabled} />
+      ) : null}
       {children}
       <div className="reasoning-gate-actions">
         <button type="button" className="secondary-button" onClick={onBack}>回到案件桌</button>
