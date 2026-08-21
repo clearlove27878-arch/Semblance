@@ -1,0 +1,234 @@
+{
+  "caseClues": 11,
+  "policeClues": 6,
+  "visualClues": 2,
+  "recordings": 1,
+  "fictionalDeductions": 4,
+  "terminalChapters": 9,
+  "prologues": 1,
+  "gates": 3,
+  "entries": [
+    {
+      "id": "prologue",
+      "type": "prologue",
+      "title": "序　嘶",
+      "sourcePath": "案件文本/01_序_网页版.txt"
+    },
+    {
+      "id": "death-scene",
+      "type": "case_clue",
+      "title": "死亡现场",
+      "sourcePath": "案件文本/02_死亡现场.txt"
+    },
+    {
+      "id": "forensic-report",
+      "type": "case_clue",
+      "title": "法医鉴定",
+      "sourcePath": "案件文本/03_法医鉴定.txt"
+    },
+    {
+      "id": "body-injuries",
+      "type": "case_clue",
+      "title": "右拇指创口",
+      "sourcePath": "案件文本/04_右拇指创口.txt"
+    },
+    {
+      "id": "feng-home",
+      "type": "case_clue",
+      "title": "枫家整体环境",
+      "sourcePath": "案件文本/05_枫家整体环境.txt"
+    },
+    {
+      "id": "treatment-mirror",
+      "type": "case_clue",
+      "title": "治疗镜",
+      "sourcePath": "案件文本/06_治疗镜.txt"
+    },
+    {
+      "id": "snake-cabinet",
+      "type": "case_clue",
+      "title": "蛇柜",
+      "sourcePath": "案件文本/07_蛇柜.txt"
+    },
+    {
+      "id": "snake-charm",
+      "type": "case_clue",
+      "title": "新蛇符",
+      "sourcePath": "案件文本/08_新蛇符.txt"
+    },
+    {
+      "id": "tapes-initial",
+      "type": "case_clue",
+      "title": "磁带箱",
+      "sourcePath": "案件文本/09_磁带箱.txt"
+    },
+    {
+      "id": "old-recorder-rewind",
+      "type": "case_clue",
+      "title": "旧收录机与手动回卷",
+      "sourcePath": "案件文本/10_旧收录机与手动回卷.txt"
+    },
+    {
+      "id": "antivenom-initial",
+      "type": "case_clue",
+      "title": "案发日抗毒资源",
+      "sourcePath": "案件文本/11_案发日抗毒资源.txt"
+    },
+    {
+      "id": "feng-hand-injury",
+      "type": "case_clue",
+      "title": "枫的手伤",
+      "sourcePath": "案件文本/12_枫的手伤.txt"
+    },
+    {
+      "id": "recording-old-treatment",
+      "type": "recording",
+      "title": "录音",
+      "sourcePath": "案件文本/13_录音.txt"
+    },
+    {
+      "id": "novel-ling",
+      "type": "terminal_chapter",
+      "title": "玲",
+      "sourcePath": "终盘/C01_玲_网页版.txt"
+    },
+    {
+      "id": "novel-feng",
+      "type": "terminal_chapter",
+      "title": "枫",
+      "sourcePath": "终盘/C02_枫_网页版.txt"
+    },
+    {
+      "id": "lan-past",
+      "type": "terminal_chapter",
+      "title": "岚的过去",
+      "sourcePath": "终盘/C03a_岚_岚的过去.txt"
+    },
+    {
+      "id": "lan-and-zheng",
+      "type": "terminal_chapter",
+      "title": "岚与峥",
+      "sourcePath": "终盘/C03b_岚_岚与峥.txt"
+    },
+    {
+      "id": "lan-leaving-and-threat",
+      "type": "terminal_chapter",
+      "title": "离开与威胁",
+      "sourcePath": "终盘/C03c_岚_离开与威胁.txt"
+    },
+    {
+      "id": "lan-first-meeting",
+      "type": "terminal_chapter",
+      "title": "初识",
+      "sourcePath": "终盘/C03d_岚_初识.txt"
+    },
+    {
+      "id": "lan-snakebite",
+      "type": "terminal_chapter",
+      "title": "蛇咬",
+      "sourcePath": "终盘/C03e_岚_蛇咬.txt"
+    },
+    {
+      "id": "lan-case-day",
+      "type": "terminal_chapter",
+      "title": "案发当日",
+      "sourcePath": "终盘/C03f_岚_案发当日.txt"
+    },
+    {
+      "id": "lan-death",
+      "type": "terminal_chapter",
+      "title": "岚之死",
+      "sourcePath": "终盘/C03g_岚_岚之死.txt"
+    },
+    {
+      "id": "story-letter",
+      "type": "fictional_deduction",
+      "title": "磁带传音",
+      "sourcePath": "虚构推理/F01_磁带传音.txt"
+    },
+    {
+      "id": "story-question",
+      "type": "fictional_deduction",
+      "title": "往日重现",
+      "sourcePath": "虚构推理/F02_往日重现.txt"
+    },
+    {
+      "id": "story-silent-letter",
+      "type": "fictional_deduction",
+      "title": "无字情书",
+      "sourcePath": "虚构推理/F03_无字情书.txt"
+    },
+    {
+      "id": "story-snake-bride",
+      "type": "fictional_deduction",
+      "title": "蛇选新娘",
+      "sourcePath": "虚构推理/F04_蛇选新娘.txt"
+    },
+    {
+      "id": "tape-supplement",
+      "type": "visual_clue",
+      "title": "“始”磁带",
+      "sourcePath": "视觉线索文本/V01_始磁带.txt"
+    },
+    {
+      "id": "wang-collage-photo",
+      "type": "visual_clue",
+      "title": "王峥的拼接照片",
+      "sourcePath": "视觉线索文本/V02_峥的拼接照片.txt"
+    },
+    {
+      "id": "statement-ling",
+      "type": "police_clue",
+      "title": "许玲｜警方已知",
+      "sourcePath": "警方已知文本/P01_玲_警方已知.txt"
+    },
+    {
+      "id": "statement-feng",
+      "type": "police_clue",
+      "title": "周枫｜警方已知",
+      "sourcePath": "警方已知文本/P02_枫_警方已知.txt"
+    },
+    {
+      "id": "statement-wang",
+      "type": "police_clue",
+      "title": "王峥｜警方已知",
+      "sourcePath": "警方已知文本/P03_峥_警方已知.txt"
+    },
+    {
+      "id": "statement-zhenhua",
+      "type": "police_clue",
+      "title": "赵振华｜警方已知",
+      "sourcePath": "警方已知文本/P04_振华_警方已知.txt"
+    },
+    {
+      "id": "wang-investigation-initial",
+      "type": "police_clue",
+      "title": "王峥旧案调查",
+      "sourcePath": "警方已知文本/P05_峥旧案调查.txt"
+    },
+    {
+      "id": "zhenhua-investigation-initial",
+      "type": "police_clue",
+      "title": "振华磁带调查",
+      "sourcePath": "警方已知文本/P06_振华磁带调查.txt"
+    },
+    {
+      "id": "tapping",
+      "type": "text_answer",
+      "title": "嗒。嗒。",
+      "sourcePath": "Gate专用文本源/嗒嗒.txt"
+    },
+    {
+      "id": "force",
+      "type": "relation",
+      "title": "四个 Force",
+      "sourcePath": "Gate专用文本源/四个Force.txt"
+    },
+    {
+      "id": "final",
+      "type": "final",
+      "title": "真凶",
+      "sourcePath": "Gate专用文本源/真凶.txt"
+    }
+  ]
+}

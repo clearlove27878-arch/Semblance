@@ -1,0 +1,32 @@
+{
+  "name": "si-web-inference-graybox",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "content:build": "node ./scripts/build-content.mjs",
+    "dev": "vite",
+    "predev": "pnpm content:build",
+    "prebuild": "pnpm content:build",
+    "build": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && vite build",
+    "test": "vitest run",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "hanzi-writer": "^3.7.3",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4"
+  }
+}

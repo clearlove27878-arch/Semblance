@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "gates": [
+    {
+      "id": "tapping",
+      "type": "text_answer",
+      "runtime": {
+        "normalization": "NFKC_trim_lowercase_remove_space_punctuation_symbols",
+        "acceptedAnswers": [
+          "错",
+          "错了",
+          "不对",
+          "理解错了",
+          "你理解错了",
+          "你猜错了",
+          "不是这个意思",
+          "不是我的意思",
+          "表示否定",
+          "否定对方的理解"
+        ],
+        "partialAliases": [
+          "不同意",
+          "不认可",
+          "拒绝",
+          "否认"
+        ]
+      }
+    },
+    {
+      "id": "force",
+      "type": "relation",
+      "runtime": {
+        "matching": "unordered_set",
+        "requiredCount": 4,
+        "standardSets": [
+          {
+            "forceId": "F1_PHOTO",
+            "objectIds": [
+              "WANG_ZHENG",
+              "WANG_ZHENG_SPLICED_PHOTO",
+              "XU_LING"
+            ]
+          },
+          {
+            "forceId": "F2_INTERPRETATION",
+            "objectIds": [
+              "CHENG_LAN",
+              "OLD_TREATMENT_INTERPRETATION",
+              "WANG_WIFE"
+            ]
+          },
+          {
+            "forceId": "F3_TALISMAN",
+            "objectIds": [
+              "XU_LING",
+              "NEW_TALISMAN",
+              "CHENG_LAN"
+            ]
+          },
+          {
+            "forceId": "F4_TAPE",
+            "objectIds": [
+              "ZHOU_FENG",
+              "START_TAPE",
+              "CHENG_LAN"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "final",
+      "type": "final",
+      "runtime": {
+        "matching": "semantic_slots",
+        "slots": [
+          {
+            "objectId": "FENG",
+            "slotId": "killer_slot"
+          },
+          {
+            "objectId": "TAPE_START",
+            "slotId": "medium_slot"
+          },
+          {
+            "objectId": "OLD_RECORDER_REWIND",
+            "slotId": "action_slot"
+          },
+          {
+            "objectId": "LAN_THUMB_WOUND",
+            "slotId": "wound_slot"
+          },
+          {
+            "objectId": "TAPE_DISPOSAL",
+            "slotId": "disposal_slot"
+          }
+        ]
+      }
+    }
+  ],
+  "objectMap": {
+    "WANG_ZHENG": {
+      "label": "王峥",
+      "contentId": "statement-wang",
+      "kind": "person"
+    },
+    "XU_LING": {
+      "label": "玲",
+      "contentId": "statement-ling",
+      "kind": "person"
+    },
+    "CHENG_LAN": {
+      "label": "程岚",
+      "contentId": "forensic-report",
+      "kind": "person"
+    },
+    "ZHOU_FENG": {
+      "label": "周枫",
+      "contentId": "statement-feng",
+      "kind": "person"
+    },
+    "WANG_WIFE": {
+      "label": "王峥妻子",
+      "contentId": "wang-investigation-initial",
+      "kind": "person"
+    },
+    "WANG_ZHENG_SPLICED_PHOTO": {
+      "label": "王峥的拼接照片",
+      "contentId": "wang-collage-photo",
+      "kind": "clue",
+      "canonicalId": "wang-collage-photo"
+    },
+    "OLD_TREATMENT_INTERPRETATION": {
+      "label": "王峥的旧治疗录音",
+      "contentId": "recording-old-treatment",
+      "kind": "clue"
+    },
+    "NEW_TALISMAN": {
+      "label": "玲的新蛇符",
+      "contentId": "snake-charm",
+      "kind": "clue"
+    },
+    "START_TAPE": {
+      "label": "“始”磁带",
+      "contentId": "tape-supplement",
+      "kind": "clue"
+    },
+    "FENG": {
+      "label": "周枫",
+      "contentId": "statement-feng",
+      "kind": "person",
+      "canonicalId": "ZHOU_FENG"
+    },
+    "TAPE_START": {
+      "label": "“始”磁带",
+      "contentId": "tape-supplement",
+      "kind": "clue",
+      "canonicalId": "START_TAPE"
+    },
+    "OLD_RECORDER_REWIND": {
+      "label": "旧收录机与手动回卷",
+      "contentId": "old-recorder-rewind",
+      "kind": "clue"
+    },
+    "LAN_THUMB_WOUND": {
+      "label": "程岚右拇指创口",
+      "contentId": "body-injuries",
+      "kind": "clue"
+    },
+    "TAPE_DISPOSAL": {
+      "label": "振华磁带调查",
+      "contentId": "zhenhua-investigation-initial",
+      "kind": "clue"
+    },
+    "ZHAO_ZHENHUA": {
+      "label": "赵振华",
+      "contentId": "statement-zhenhua",
+      "kind": "person"
+    }
+  }
+}
