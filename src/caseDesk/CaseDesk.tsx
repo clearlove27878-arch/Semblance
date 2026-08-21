@@ -990,7 +990,6 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
       if (item) openStory(item);
       return;
     }
-    if (!['POLICE_INVESTIGATION', 'FORCE_GATE', 'DEDUCTION_PHASE', 'FINAL_GATE'].includes(state.currentPhase)) return;
     onFlowEvent({ type: 'DEDUCTION_UNLOCKED', deductionId: match.deductionId, source: DEDUCTION_UNLOCK_SOURCE });
     setClueSearch('');
     setDeductionNotice('发现一套新的推理。');

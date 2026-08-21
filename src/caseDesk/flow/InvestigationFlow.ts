@@ -353,8 +353,7 @@ export function reduceInvestigationFlow(state: CaseState, event: FlowEvent, defi
 
     case 'DEDUCTION_UNLOCKED': {
       if (!definition.fictionalDeductionIds.includes(event.deductionId) || state.unlockedDeductionIds.includes(event.deductionId)) return state;
-      if (event.source !== DEDUCTION_UNLOCK_SOURCE || state.screen !== 'DESK') return state;
-      if (!['POLICE_INVESTIGATION', 'FORCE_GATE', 'DEDUCTION_PHASE', 'FINAL_GATE'].includes(state.currentPhase)) return state;
+      if (event.source !== DEDUCTION_UNLOCK_SOURCE) return state;
       return touch(state, {
         unlockedDeductionIds: appendUnique(state.unlockedDeductionIds, [event.deductionId]),
         unlockedContentIds: appendUnique(state.unlockedContentIds, [event.deductionId])

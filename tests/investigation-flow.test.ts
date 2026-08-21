@@ -154,16 +154,33 @@ describe('InvestigationFlow 状态与配置', () => {
     }
   });
 
-  it('推理解锁事件必须带有搜索来源，终盘状态也不能接收推理解锁', () => {
-    const state = dispatch(dispatch(reachTappingGate(), { type: 'GATE_SOLVED', gateId: 'tapping' }), { type: 'RETURN_TO_DESK' });
+  it('推理解锁事件只要求正式搜索来源，不依赖 Gate、阶段或界面状态', () => {
+    const state = createInitialCaseState();
     const withoutSearch = dispatch(state, { type: 'DEDUCTION_UNLOCKED', deductionId: 'story-letter' } as never);
     expect(withoutSearch).toBe(state);
 
     const afterSearch = dispatch(state, { type: 'DEDUCTION_UNLOCKED', deductionId: 'story-letter', source: DEDUCTION_UNLOCK_SOURCE });
     expect(afterSearch.unlockedDeductionIds).toEqual(['story-letter']);
 
-    const complete = { ...state, currentPhase: 'COMPLETE' as const };
-    expect(dispatch(complete, { type: 'DEDUCTION_UNLOCKED', deductionId: 'story-question', source: DEDUCTION_UNLOCK_SOURCE })).toBe(complete);
+    const stateVariants = [
+      { screen: 'START' as const, currentPhase: 'INTRO' as const },
+      { screen: 'DESK' as const, currentPhase: 'CASE_INVESTIGATION' as const },
+      { screen: 'DESK' as const, currentPhase: 'TAP_GATE' as const },
+      { screen: 'DESK' as const, currentPhase: 'POLICE_INVESTIGATION' as const },
+      { screen: 'DESK' as const, currentPhase: 'FORCE_GATE' as const },
+      { screen: 'DESK' as const, currentPhase: 'DEDUCTION_PHASE' as const },
+      { screen: 'DESK' as const, currentPhase: 'FINAL_GATE' as const },
+      { screen: 'DESK' as const, currentPhase: 'TERMINAL_REVEAL' as const },
+      { screen: 'ENDING' as const, currentPhase: 'COMPLETE' as const }
+    ];
+    stateVariants.forEach(({ screen, currentPhase }, index) => {
+      const deductionId = PRODUCTION_FLOW.fictionalDeductionIds[index % PRODUCTION_FLOW.fictionalDeductionIds.length];
+      const unlocked = dispatch(
+        { ...state, screen, currentPhase },
+        { type: 'DEDUCTION_UNLOCKED', deductionId, source: DEDUCTION_UNLOCK_SOURCE }
+      );
+      expect(unlocked.unlockedDeductionIds).toContain(deductionId);
+    });
   });
 
   it('Final Gate 后进入阅读主页，玲与枫独立打开且完成不自动推进', () => {
