@@ -7,8 +7,11 @@ import { ContentValidationError, assertPlayerSafe, normalizedForCompare, parseGa
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, '..');
-const sourceRoot = path.resolve(process.env.SI_CONTENT_SOURCE ?? path.resolve(projectRoot, '..', '网页文本源'));
-const assetRoot = path.resolve(sourceRoot, '..');
+const embeddedSourceRoot = path.join(projectRoot, '网页文本源');
+const sourceOverride = process.env.SI_CONTENT_SOURCE?.trim();
+const sourceRoot = path.resolve(sourceOverride || embeddedSourceRoot);
+const usesEmbeddedSource = !sourceOverride;
+const sourceAssetRoot = usesEmbeddedSource ? null : path.resolve(sourceRoot, '..');
 const generatedRoot = path.join(projectRoot, 'src', 'content', 'generated');
 const publicAssetsRoot = path.join(projectRoot, 'public', 'content-assets');
 
@@ -128,9 +131,13 @@ async function copyMappedAssets() {
   const assetEntries = Object.values(CONTENT_MANIFEST.images);
   await mkdir(publicAssetsRoot, { recursive: true });
   for (const asset of assetEntries) {
-    const source = path.join(assetRoot, asset.sourcePath);
-    if (!existsSync(source)) contentError(asset.sourcePath, '图片', 'asset mapping 指向的图片不存在');
     const target = path.join(publicAssetsRoot, asset.publicPath.replace(/^\/content-assets\//, ''));
+    if (usesEmbeddedSource) {
+      if (!existsSync(target)) contentError(asset.publicPath, '图片', '默认项目内图片源缺少正式资源');
+      continue;
+    }
+    const source = path.join(sourceAssetRoot, asset.sourcePath);
+    if (!existsSync(source)) contentError(asset.sourcePath, '图片', 'SI_CONTENT_SOURCE source-side asset mapping 指向的图片不存在');
     await mkdir(path.dirname(target), { recursive: true });
     await cp(source, target, { force: true });
   }

@@ -11,8 +11,10 @@
     "content:build": "node ./scripts/build-content.mjs",
     "dev": "vite",
     "predev": "pnpm content:build",
-    "prebuild": "pnpm content:build",
-    "build": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && vite build",
+    "build:app": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && vite build",
+    "build": "pnpm content:build && pnpm build:app",
+    "deploy:check": "node ./scripts/check-deploy-inputs.mjs",
+    "build:deploy": "pnpm deploy:check && pnpm build:app",
     "test": "vitest run",
     "preview": "vite preview"
   },
