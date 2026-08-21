@@ -24,8 +24,8 @@ export function ClueCollection({ items, totalCount, selectedId, onSelect, active
     <section id="case-materials" className="clue-collection" aria-labelledby="clue-collection-title">
       <div className="section-heading clue-collection-heading">
         <div>
-          <p className="eyebrow">已解锁线索</p>
-          <h2 id="clue-collection-title">案件材料</h2>
+          <p className="eyebrow">调查索引下的已解锁内容</p>
+          <h2 id="clue-collection-title">已解锁案件材料</h2>
         </div>
         <span className="section-count" aria-label={`共 ${totalCount} 条线索`}>{items.length === totalCount ? totalCount : `${items.length}/${totalCount}`}</span>
       </div>

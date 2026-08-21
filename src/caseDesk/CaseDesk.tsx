@@ -342,6 +342,7 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
   const [flowNotice, setFlowNotice] = useState('');
   const [deductionNotice, setDeductionNotice] = useState('');
   const previousUnlockedRef = useRef<string[] | null>(null);
+  const pendingMaterialScrollRef = useRef(false);
 
   const publishedMaterials = useMemo(() => content.materials.filter((item) => state.unlockedContentIds.includes(item.id)), [content.materials, state.unlockedContentIds]);
   const deductionShelfItems = useMemo(() => getDeductionShelfItems(state.unlockedDeductionIds, state.viewedContentIds), [state.unlockedDeductionIds, state.viewedContentIds]);
@@ -379,6 +380,21 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
     if (!activeClue || activeClue.viewed) return;
     onFlowEvent({ type: 'CONTENT_VIEWED', contentId: activeMaterialId });
   }, [activeMaterialId, clueById, onFlowEvent]);
+
+  useEffect(() => {
+    if (!pendingMaterialScrollRef.current || !activeMaterialId || !window.matchMedia('(max-width: 760px)').matches) return undefined;
+    pendingMaterialScrollRef.current = false;
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        document.getElementById('material-reader')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      if (secondFrame) window.cancelAnimationFrame(secondFrame);
+    };
+  }, [activeMaterialId]);
 
   useEffect(() => {
     const previous = previousUnlockedRef.current;
@@ -596,6 +612,7 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
 
   const openMaterial = (item: Material, options: { replaceHistory?: boolean } = {}) => {
     onFlowEvent({ type: 'CONTENT_VIEWED', contentId: item.id });
+    if (item.id !== activeMaterialId && window.matchMedia('(max-width: 760px)').matches) pendingMaterialScrollRef.current = true;
     setActiveMaterialId(item.id);
     setViewerOpen(false);
     writeCaseHistory({ siCaseView: 'material', materialId: item.id, gateId: undefined, pickerMode: undefined, targetSlot: undefined }, Boolean(options.replaceHistory));
@@ -957,7 +974,11 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
       return;
     }
     if (searchContext === 'case-desk') {
-      setClueDrawerOpen(true);
+      if (window.matchMedia('(max-width: 760px)').matches) {
+        focusDeskSection(activeMaterialSection === 'all' ? 'case' : activeMaterialSection);
+      } else {
+        setClueDrawerOpen(true);
+      }
       return;
     }
     // Deduction owns its exact-title resolver; it is not shared with the
@@ -1158,7 +1179,7 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
   return (
     <AmbientScene sceneKey="desk" variant="normal">
       <div className="desk-page">
-      <CaseDeskHeader caseName="《似》" stage={stage.deskLabel} clueCount={publishedMaterials.length} onOpenClues={() => setClueDrawerOpen(true)} onIntroReview={onIntroReview} onRestart={onRestart} />
+      <CaseDeskHeader caseName="《似》" stage={stage.deskLabel} clueCount={publishedMaterials.length} onIntroReview={onIntroReview} onRestart={onRestart} />
       <InvestigationNav state={state} activeSection={activeNavSection} activeGateId={gateSession?.gateId ?? null} onNavigate={handleNavNavigate} />
       {flowNotice ? <FlowNotice>{flowNotice}</FlowNotice> : null}
       {deductionNotice ? <FlowNotice>{deductionNotice}</FlowNotice> : null}

@@ -5,7 +5,7 @@ interface CaseDeskHeaderProps {
   caseName: string;
   stage: string;
   clueCount: number;
-  onOpenClues: () => void;
+  onOpenClues?: () => void;
   onIntroReview?: () => void;
   onRestart?: () => void;
   children?: ReactNode;
@@ -29,7 +29,6 @@ export function CaseDeskHeader({ caseName, stage, clueCount, onOpenClues, onIntr
       </div>
 
       <div className="desk-actions">
-        <button type="button" className="mobile-clue-button" onClick={onOpenClues}>线索 {clueCount}</button>
         {children}
         {onIntroReview ? <button type="button" className="text-button" onClick={onIntroReview}>回看序</button> : null}
         {onRestart ? <button type="button" className="text-button" onClick={onRestart}>重新开始</button> : null}
