@@ -95,7 +95,7 @@ export function ReasoningBar({ mode, query, relationChips, onModeChange, onQuery
             <span className="sr-only">{MODE_LABELS[mode]}输入</span>
             <input ref={inputRef} value={query} onChange={(event) => onQueryChange(event.target.value)} onKeyDown={handleKeyDown} onCompositionStart={() => { composingRef.current = true; }} onCompositionEnd={() => { composingRef.current = false; }} placeholder={placeholder} disabled={inputDisabled} aria-label={`${MODE_LABELS[mode]}输入`} />
           </label>
-          {mode === 'search' ? <button type="submit" className="primary-button reasoning-submit" disabled={inputDisabled || submitDisabled}>搜索</button> : null}
+          {mode === 'search' ? <button type="submit" className="primary-button reasoning-submit" onClick={(event) => { event.preventDefault(); submit(); }} disabled={inputDisabled || submitDisabled}>搜索</button> : null}
           {mode === 'answer' ? <button type="button" className="primary-button reasoning-submit" onClick={onSubmit} disabled={inputDisabled || submitDisabled}>{inputDisabled ? '已完成' : '提交判断'}</button> : null}
           {mode === 'relation' ? <span className="reasoning-hint">选择线索后加入</span> : null}
         </form>

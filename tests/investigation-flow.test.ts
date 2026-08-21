@@ -98,6 +98,23 @@ describe('InvestigationFlow 状态与配置', () => {
     expect(getAvailableGateIds(state)).toEqual(['final']);
   });
 
+  it('四篇虚构推理均支持正式标题与书名号归一化，错误标题和空输入不命中', () => {
+    const expected = [
+      ['磁带传音', 'story-letter'],
+      ['往日重现', 'story-question'],
+      ['无字情书', 'story-silent-letter'],
+      ['蛇选新娘', 'story-snake-bride']
+    ] as const;
+    const state = dispatch(dispatch(reachTappingGate(), { type: 'GATE_SOLVED', gateId: 'tapping' }), { type: 'RETURN_TO_DESK' });
+    for (const [title, deductionId] of expected) {
+      expect(resolveDeductionTitle(state, title)).toEqual({ deductionId, alreadyUnlocked: false });
+      expect(resolveDeductionTitle(state, `《${title}》`)).toEqual({ deductionId, alreadyUnlocked: false });
+    }
+    expect(resolveDeductionTitle(state, '蛇选新郎')).toBeNull();
+    expect(resolveDeductionTitle(state, '')).toBeNull();
+    expect(resolveDeductionTitle(state, '《》')).toBeNull();
+  });
+
   it('虚构推理标题精确解锁且重复输入不创建第二份记录', () => {
     let state = dispatch(dispatch(reachTappingGate(), { type: 'GATE_SOLVED', gateId: 'tapping' }), { type: 'RETURN_TO_DESK' });
     state = dispatch(state, { type: 'ENTER_GATE', gateId: 'force' });
@@ -111,6 +128,30 @@ describe('InvestigationFlow 状态与配置', () => {
     expect(resolveDeductionTitle(state, '磁带传音')).toEqual({ deductionId: 'story-letter', alreadyUnlocked: true });
     const duplicate = dispatch(state, { type: 'DEDUCTION_UNLOCKED', deductionId: 'story-letter', source: DEDUCTION_UNLOCK_SOURCE });
     expect(duplicate).toBe(state);
+  });
+
+  it('一次搜索只解锁对应的一篇虚构推理，并可持久化回读', () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => { values.set(key, value); },
+      removeItem: (key: string) => { values.delete(key); }
+    };
+    const previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: { localStorage: storage } });
+
+    try {
+      let state = dispatch(dispatch(reachTappingGate(), { type: 'GATE_SOLVED', gateId: 'tapping' }), { type: 'RETURN_TO_DESK' });
+      const match = resolveDeductionTitle(state, '蛇选新娘');
+      expect(match?.deductionId).toBe('story-snake-bride');
+      state = dispatch(state, { type: 'DEDUCTION_UNLOCKED', deductionId: match?.deductionId ?? '', source: DEDUCTION_UNLOCK_SOURCE });
+      expect(state.unlockedDeductionIds).toEqual(['story-snake-bride']);
+      saveCaseDeskState(state);
+      expect(loadCaseDeskState().state.unlockedDeductionIds).toEqual(['story-snake-bride']);
+    } finally {
+      if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow);
+      else delete (globalThis as { window?: unknown }).window;
+    }
   });
 
   it('推理解锁事件必须带有搜索来源，终盘状态也不能接收推理解锁', () => {
