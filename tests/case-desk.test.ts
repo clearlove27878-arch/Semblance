@@ -306,7 +306,7 @@ describe('网页正文解析与长阅读', () => {
     }
 
     expect(chapters[0]?.pages).toHaveLength(6);
-    expect(chapters[1]?.pages).toHaveLength(7);
+    expect(chapters[1]?.pages).toHaveLength(6);
     expect(chapters.slice(2).every((chapter) => Boolean(chapter.pages))).toBe(true);
     expect(chapters.slice(2).every((chapter) => chapter.pages?.length === 1)).toBe(true);
     expect(chapters.at(-1)?.bodyBlocks.filter((block) => block.kind === 'highlight').map((block) => block.text)).toContain('好像啊，\n天，\n好像真的黑下来了啊—');
@@ -317,7 +317,7 @@ describe('网页正文解析与长阅读', () => {
 });
 
 describe('调查桌分批与 Registry 内容加载', () => {
-  it('序读完只发布三份尸阶段材料', () => {
+  it('序读完只发布四份首批案件调查材料（含录音）', () => {
     const state = enterDesk();
     expect(state.case_phase).toBe('CORPSE');
     expect(state.published_material_ids).toEqual([...SCENE_MATERIAL_IDS]);

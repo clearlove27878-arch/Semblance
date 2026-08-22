@@ -2,6 +2,7 @@ const FIELD_RE = /^\[([^\]]+)\]$/;
 const PAGE_RE = /^第\s*([0-9一二三四五六七八九十百]+)\s*页$/;
 const PAGE_BREAK_RE = /^(?:——\s*翻页\s*——|---)$/;
 const DIVIDER_RE = /^-{3,}$/;
+const PLAYER_BODY_LABEL_RE = /^录音片段(?:[0-9一二三四五六七八九十百]+)$/;
 const HIGHLIGHT_MARKERS = new Set(['重点', '[重点]', '【重点】']);
 const HIGHLIGHT_BLOCK_START_MARKERS = new Set(['重点开始', '[重点开始]', '【重点开始】']);
 const HIGHLIGHT_BLOCK_END_MARKERS = new Set(['重点结束', '[重点结束]', '【重点结束】']);
@@ -75,6 +76,12 @@ function parsePlayerBody(lines, file, { lineParagraphs = false } = {}) {
 
   for (const sourceBlock of sourceBlocks) {
     const trimmed = sourceBlock.trim();
+    const sourceLines = sourceBlock.split('\n');
+    if (sourceLines.length > 1 && isHighlightMarker(sourceLines[0].trim())) {
+      blocks.push({ kind: 'highlight', text: sourceLines.slice(1).join('\n') });
+      pendingHighlight = false;
+      continue;
+    }
     const pageMarker = trimmed.startsWith('[') && trimmed.endsWith(']') ? trimmed.slice(1, -1).trim() : trimmed;
     if (isHighlightBlockStart(trimmed) || isHighlightBlockStart(pageMarker)) {
       if (explicitHighlightLines) fail(file, 'PLAYER正文', '重点块不能嵌套');
@@ -156,6 +163,13 @@ function collectPlainSections(lines, file) {
       continue;
     }
     if (current === 'PLAYER正文' && match && PAGE_RE.test(match[1])) {
+      sections.get(current).push(line);
+      continue;
+    }
+    if (current === 'PLAYER正文' && match && PLAYER_BODY_LABEL_RE.test(match[1].trim())) {
+      // A recording source may use bracketed, player-visible clip labels as
+      // body structure. Keep the source line in the player body; do not treat
+      // it as a new metadata field.
       sections.get(current).push(line);
       continue;
     }

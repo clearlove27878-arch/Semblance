@@ -8,7 +8,8 @@ export const INTRO_STEP_COUNT = 6;
 export const SCENE_MATERIAL_IDS = [
   'death-scene',
   'forensic-report',
-  'body-injuries'
+  'body-injuries',
+  'recording-old-treatment'
 ] as const;
 
 export const HOME_FIRST_MATERIAL_IDS = [
@@ -26,7 +27,7 @@ export const HOME_SECOND_MATERIAL_IDS = [
 
 /**
  * This is the first explicit release table.  It carries forward the already
- * shipped 3 / 4 / 3 investigation batches and makes the later Gate inputs
+ * shipped 4 / 4 / 3 investigation batches and makes the later Gate inputs
  * available as one named police-investigation release.  It does not infer
  * order from filenames.
  */
@@ -36,7 +37,6 @@ export const POLICE_INVESTIGATION_CONTENT_IDS = [
   'statement-zhenhua',
   'statement-wang',
   'wang-investigation-initial',
-  'recording-old-treatment',
   'old-recorder-rewind',
   'tape-supplement',
   'wang-collage-photo',

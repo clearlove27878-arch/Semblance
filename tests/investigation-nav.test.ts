@@ -60,8 +60,9 @@ describe('InvestigationNav 派生模型', () => {
   it('案件资料未读数来自 unlocked - viewed，查看后立即减少', () => {
     const state = enterDesk();
     const before = getInvestigationNavModel(state);
-    expect(before.sections.map((section) => section.id)).toEqual(['case', 'deduction']);
+    expect(before.sections.map((section) => section.id)).toEqual(['case', 'police', 'deduction']);
     expect(before.sections[0]?.unreadCount).toBe(3);
+    expect(before.sections.find((section) => section.id === 'police')?.unreadCount).toBe(1);
 
     const viewed = dispatch(state, { type: 'CONTENT_VIEWED', contentId: 'death-scene' });
     expect(getInvestigationNavModel(viewed).sections[0]?.unreadCount).toBe(2);
@@ -71,7 +72,7 @@ describe('InvestigationNav 派生模型', () => {
     const state = reachPoliceInvestigation();
     const model = getInvestigationNavModel(state);
     expect(model.sections.map((section) => section.id)).toEqual(['case', 'police', 'deduction', 'reasoning']);
-    expect(model.sections.find((section) => section.id === 'police')?.unreadCount).toBe(10);
+    expect(model.sections.find((section) => section.id === 'police')?.unreadCount).toBe(9);
     expect(model.sections.find((section) => section.id === 'reasoning')?.label).toBe('当前推理');
     expect(model.sections.find((section) => section.id === 'reasoning')?.routeTarget).toEqual({ type: 'reasoning', gateId: 'force' });
     expect(model.sections.some((section) => section.label === '阅读')).toBe(false);

@@ -1257,7 +1257,7 @@ export function CaseDesk({ state, onFlowEvent, content, onIntroReview, onRestart
           ) : null}
 
           {state.currentPhase === 'POLICE_INVESTIGATION' ? (
-            <section className="desk-section flow-section"><div className="section-heading"><h2>调查还在继续</h2></div><p>人物、旧案和录音已经加入案件桌。你可以先查看材料，也可以在判断准备好以后进入 Force。</p></section>
+            <section className="desk-section flow-section"><div className="section-heading"><h2>调查还在继续</h2></div><p>人物与旧案已经加入案件桌，录音也可以随时回看。你可以先查看材料，也可以在判断准备好以后进入 Force。</p></section>
           ) : null}
 
         </section>

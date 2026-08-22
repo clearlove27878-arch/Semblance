@@ -51,11 +51,12 @@ describe('InvestigationFlow 状态与配置', () => {
     expect(() => assertValidFlowDefinition(PRODUCTION_FLOW)).not.toThrow();
   });
 
-  it('序后按配置发布 3 / 4 / 3 批材料，未阅读时不能推进', () => {
+  it('序后按配置发布 4 / 4 / 3 批材料，录音在嗒嗒 Gate 前可读且未阅读时不能推进', () => {
     let state = enterDesk();
     expect(state.currentPhase).toBe('CASE_INVESTIGATION');
     expect(state.investigationBatch).toBe(1);
     expect(state.unlockedContentIds).toEqual([...PRODUCTION_FLOW.investigationBatches[0]]);
+    expect(state.unlockedContentIds).toContain('recording-old-treatment');
 
     const before = state;
     state = dispatch(state, { type: 'CONTINUE' });

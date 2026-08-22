@@ -1,5 +1,5 @@
 import { CASE_DESK_SAVE_VERSION, createInitialCaseState, FORCE_SCHEMA_VERSION, getSafePhaseWithoutFinalGate, isFinalGateCompleted } from './state';
-import { FLOW_VERSION, FICTIONAL_DEDUCTION_IDS, READING_CHAPTER_ORDER } from './flow/flowDefinition';
+import { FLOW_VERSION, FICTIONAL_DEDUCTION_IDS, READING_CHAPTER_ORDER, SCENE_MATERIAL_IDS } from './flow/flowDefinition';
 import { isLanReadingChapterId, migrateReadingChapterId, READING_INDEX_BASE_CHAPTER_IDS } from './readingIndex';
 import { INVESTIGATION_PHASES, type AppScreen, type CaseState, type FormalGateId, type InvestigationPhase, type TerminalProgress } from './types';
 import { clearReasoningGateDraft } from './reasoningDraftPersistence';
@@ -179,6 +179,11 @@ function mergeState(raw: Partial<CaseState>): CaseState {
     terminalProgress = null;
   }
   let currentPhase = legacyPhase(raw);
+  if (currentPhase === 'CASE_INVESTIGATION' && legacyBatch(raw) > 0) {
+    // The recording moved into the first pre-Gate batch. Keep an in-progress
+    // save usable without marking the newly released material as read.
+    unlockedContentIds = uniqueStrings([...unlockedContentIds, ...SCENE_MATERIAL_IDS]);
+  }
   let solvedGateIds = validGateIds(raw.solvedGateIds).length > 0
     ? validGateIds(raw.solvedGateIds)
     : raw.tapping_gate_passed ? ['tapping' as FormalGateId] : [];
